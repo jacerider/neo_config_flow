@@ -1,0 +1,10 @@
+name: 'Neo Config Flow'
+type: module
+description: 'Provides a unified config workflow that prevents accidental or unexpected config changes.'
+package: Neo
+version: 0.0.0
+core_version_requirement: ^10.3 || ^11
+dependencies:
+  - config_ignore:config_ignore
+  - config_readonly:config_readonly
+  - config_split:config_split

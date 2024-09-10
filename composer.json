@@ -1,0 +1,25 @@
+{
+  "name": "jacerider/neo_config_flow",
+  "description": "Provides a unified config workflow that prevents accidental or unexpected config changes.",
+  "type": "drupal-module",
+  "license": "proprietary",
+  "homepage": "https://github.com/jacerider/neo_config_flow",
+  "authors": [
+    {
+      "name": "Cyle Carlson (JaceRider)",
+      "email": "jacerider@gmail.com",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/jacerider/neo_config_flow/issues",
+    "source": "https://github.com/jacerider/neo_config_flow"
+  },
+  "minimum-stability": "dev",
+  "require": {
+    "drupal/core": "^10.3",
+    "drupal/config_split": "^2.0",
+    "drupal/config_readonly": "^1.0",
+    "drupal/config_ignore": "^3.3"
+  }
+}

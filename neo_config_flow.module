@@ -1,0 +1,98 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Neo Config Flow module.
+ */
+
+use Drupal\config_split\Entity\ConfigSplitEntityInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+
+/**
+ * Config to always allow updates to regardless of the read-only status.
+ *
+ * @return string[]
+ */
+function neo_config_flow_allow() {
+  return [
+    'core.menu.static_menu_link_overrides',
+    'system.menu.*',
+    'redirect.settings',
+    'redirect_404.settings',
+    'taxonomy.vocabulary.*',
+  ];
+}
+
+/**
+ * Implements hook_config_readonly_whitelist_patterns().
+ *
+ * Configuration to always allow updates to regardless of the read-only status.
+ */
+function neo_config_flow_config_readonly_whitelist_patterns() {
+  return array_merge(\Drupal::config('config_ignore.settings')->get('ignored_config_entities'), neo_config_flow_allow());
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function neo_config_flow_config_split_access(ConfigSplitEntityInterface $config_split, $op, AccountInterface $account) {
+  if ($op === 'delete' && $config_split->id()) {
+    return AccessResult::forbidden('Cannot delete "dev" config split.');
+  }
+  return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function neo_config_flow_form_config_ignore_settings_alter(array &$form, FormStateInterface &$form_state, $form_id) {
+  $form['simple']['neo_config_flow'] = [
+    '#type' => 'inline_template',
+    '#template' => '
+    <div class="card p-6">
+      <h2 class="font-bold">Neo Config Flow</h2>
+      <div class="description mb-3">The following config is always ignored:</div>
+      <ul class="list-disc list-inside text-sm">
+        {% for item in config %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>',
+    '#context' => [
+      'config' => neo_config_flow_allow(),
+    ],
+  ];
+}
+
+/**
+ * Returns TRUE if config should be locked.
+ *
+ * @return bool
+ *   Returns TRUE if config should be locked.
+ */
+function neo_config_flow_lock() {
+  if (PHP_SAPI === 'cli') {
+    return FALSE;
+  }
+  // If config split dev is enabled, allow editing of everything.
+  $status = \Drupal::config('config_split.config_split.dev')->get('status');
+  if ($status) {
+    return FALSE;
+  }
+  // Allow importing from the single form.
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  if ($route_name) {
+    if (in_array($route_name, [
+      'config.import_single',
+    ])) {
+      return FALSE;
+    }
+  }
+  // Allow force override.
+  if (!empty(\Drupal::request()->query->get('config_force'))) {
+    return FALSE;
+  }
+  return TRUE;
+}

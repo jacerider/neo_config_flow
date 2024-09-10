@@ -1,0 +1,9 @@
+_core:
+  default_config_hash: IgOVnECx6lbVt6JVFnadoEEugneDf3UblPZnOzov43Q
+mode: simple
+ignored_config_entities:
+  - 'google_tag.container.*'
+  - 'search_api.server.*'
+  - system.site
+  - 'webform.webform.*'
+  - 'webform.webform_options.*'

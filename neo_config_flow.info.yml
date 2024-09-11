@@ -1,4 +1,4 @@
-name: 'Neo Config Flow'
+name: 'Neo | Config Flow'
 type: module
 description: 'Provides a unified config workflow that prevents accidental or unexpected config changes.'
 package: Neo

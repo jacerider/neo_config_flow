@@ -6,6 +6,7 @@ label: Dev
 folder: ../config-dev
 module:
   devel: 0
+  devel_entity_updates: 0
   reroute_email: 0
   stage_file_proxy: 0
   views_ui: 0

@@ -9,6 +9,7 @@ use Drupal\config_split\Entity\ConfigSplitEntityInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\user\RoleInterface;
 
 /**
  * Config to always allow updates to regardless of the read-only status.
@@ -95,4 +96,36 @@ function neo_config_flow_lock() {
     return FALSE;
   }
   return TRUE;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_load().
+ */
+function neo_config_flow_user_role_load($roles) {
+  // If config split dev is enabled, allow editing of everything.
+  $status = \Drupal::config('config_split.config_split.dev')->get('status');
+  if ($status) {
+    foreach ($roles as $role) {
+      /** @var \Drupal\user\RoleInterface $role */
+      if (PHP_SAPI !== 'cli') {
+        $role->grantPermission('access devel information');
+      }
+      else {
+        $role->revokePermission('access devel information');
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function exo_config_user_role_update(RoleInterface $role) {
+  // If config split dev is enabled, allow editing of everything.
+  $status = \Drupal::config('config_split.config_split.dev')->get('status');
+  if ($status && $role->hasPermission('access devel information')) {
+    /** @var \Drupal\user\RoleInterface $role */
+    $role->revokePermission('access devel information');
+    $role->save();
+  }
 }

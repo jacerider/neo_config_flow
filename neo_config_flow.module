@@ -120,7 +120,7 @@ function neo_config_flow_user_role_load($roles) {
 /**
  * Implements hook_ENTITY_TYPE_update().
  */
-function exo_config_user_role_update(RoleInterface $role) {
+function neo_config_flow_user_role_update(RoleInterface $role) {
   // If config split dev is enabled, allow editing of everything.
   $status = \Drupal::config('config_split.config_split.dev')->get('status');
   if ($status && $role->hasPermission('access devel information')) {

@@ -3,6 +3,7 @@ _core:
 mode: simple
 ignored_config_entities:
   - 'google_tag.container.*'
+  - 'google_tag.settings'
   - 'search_api.server.*'
   - system.site
   - 'webform.webform.*'

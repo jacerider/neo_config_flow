@@ -5,6 +5,6 @@ ignored_config_entities:
   - 'REMOVE_BEFORE_LAUNCH.google_tag.container.*'
   - 'REMOVE_BEFORE_LAUNCH.google_tag.settings'
   - 'REMOVE_BEFORE_LAUNCH.search_api.server.*'
-  - 'REMOVE_BEFORE_LAUNCH.system.site
+  - REMOVE_BEFORE_LAUNCH.system.site
   - 'REMOVE_BEFORE_LAUNCH.webform.webform.*'
   - 'REMOVE_BEFORE_LAUNCH.webform.webform_options.*'

@@ -11,16 +11,30 @@ use Drupal\Component\Render\FormattableMarkup;
 
 /**
  * Implements hook_install().
+ *
+ * Writes the bundled config split and config ignore settings, which a profile
+ * would otherwise load before this module can. Two things are left alone,
+ * because either one silently replaces the rules a live site runs on:
+ *
+ * - Config that already exists. A site moving to this module from another one
+ *   (or reinstalling it) keeps the split and the ignore list it has.
+ * - Everything, during a config import. The site's own settings are being
+ *   imported alongside this module; the bundled ignore list names nothing
+ *   real, so a site that took it mid-import would stop ignoring the config it
+ *   keeps out of sync — webforms, say — and the next import would delete it.
  */
-function neo_config_flow_install() {
-  // The base profile has config types that it defines. Since it loads its
-  // config in before this module can, our config type config never gets loaded.
-  // We manually override this below.
+function neo_config_flow_install($is_syncing = FALSE) {
+  if ($is_syncing) {
+    return;
+  }
   $config_path = \Drupal::service('extension.list.module')->getPath('neo_config_flow') . '/config/optional';
   $source = new FileStorage($config_path);
   $config_storage = \Drupal::service('config.storage');
   $files = $source->listAll('');
   foreach ($files as $name) {
+    if ($config_storage->exists($name)) {
+      continue;
+    }
     $config_storage->write($name, $source->read($name));
   }
 }
